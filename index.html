@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remove ID from File</title>
+</head>
+
+<body>
+
+  <h2>Remove ID from File</h2>
+
+  <div>
+    <label for="idInput">Enter ID to remove:</label>
+    <input type="text" id="idInput">
+  </div>
+
+  <div>
+    <input type="file" id="fileInput">
+    <button onclick="removeID()">Remove ID</button>
+  </div>
+
+  <a id="downloadLink" style="display: none;">Download Modified File</a>
+
+  <script>
+    function removeID() {
+      var idToRemove = document.getElementById("idInput").value;
+      var fileInput = document.getElementById("fileInput");
+
+      if (fileInput.files.length > 0) {
+        var file = fileInput.files[0];
+        var reader = new FileReader();
+
+        reader.onload = function (event) {
+          var content = event.target.result;
+          // Split content by newline character
+          var lines = content.split('\n');
+
+          // Remove the specified ID from the lines
+          var modifiedLines = lines.filter(function (line) {
+            return line.trim() !== idToRemove.trim();
+          });
+
+          // Join the modified lines back into content
+          var modifiedContent = modifiedLines.join('\n');
+
+          // Create a new Blob with modified content
+          var modifiedFile = new Blob([modifiedContent], {type: file.type});
+
+          // Create a download link for the modified file
+          var downloadLink = document.getElementById('downloadLink');
+          downloadLink.href = URL.createObjectURL(modifiedFile);
+          downloadLink.download = file.name;
+          downloadLink.style.display = 'block';
+        };
+
+        reader.readAsText(file);
+      } else {
+        alert("Please select a file.");
+      }
+    }
+  </script>
+
+</body>
+
+</html>
